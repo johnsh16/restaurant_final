@@ -1,0 +1,12 @@
+.place_order {
+    width: 45vw;
+}
+
+.order_summary {
+    width: 45vw;
+    margin-left: 5%;
+}
+
+.card_row {
+    margin-left: 10px;
+}
