@@ -25,8 +25,9 @@ function MyApp({ Component, pageProps }) {
     
   }
 
-  setUser = () => {
-    
+  setUser = (props) => {
+    console.log("Setting user")
+    user = props
   }
 
   return (

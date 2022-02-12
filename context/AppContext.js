@@ -1,7 +1,7 @@
 import React from "react";
 
 const AppContext = React.createContext({
-        authenticated: true,
+        authenticated: false,
         cart: {
             items:[],
             total: 0

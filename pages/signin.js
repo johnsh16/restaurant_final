@@ -1,21 +1,27 @@
 import React from 'react'
-import {Card, CardHeader, TextField} from '@mui/material'
+import {Card, CardHeader, TextField, CardContent, FormGroup, Button} from '@mui/material'
 import {loginUser} from '../lib/auth.js'
 import {useRouter} from 'next/router'
+import AppContext from '../context/AppContext'
 
 function Signin () {
 
+    var {authenticated} = React.useContext(AppContext)
+
     const router = useRouter()
-    const [data, setData] = React.useState({username: "", password: ""})
+    const [data, setData] = React.useState({identifier: "", password: ""})
     const [error, setError] = React.useState(false)
     const [errorMsg, setErrorMsg] = React.useState("")
 
     function handleSubmit () {
         loginUser(data)
-            .then(router.push('/'))
+            .then(() => {
+                authenticated = true
+                router.push('/checkout')})
             .catch((err) => {
                 setError(true)
-                setErrorMsg(err)
+                setErrorMsg("error")
+                console.log(err)
             })
     }
 
@@ -28,15 +34,15 @@ function Signin () {
             <CardContent>
                 <FormGroup>
                     <TextField  
-                        label="Username"
-                        onChange={(e) => setData({...data, username: e.target.value})}
+                        label="Email"
+                        onChange={(e) => setData({...data, identifier: e.target.value})}
                     />
                     <TextField  
                         label="Password"
                         onChange={(e) => setData({...data, password: e.target.value})}
                     />
                 </FormGroup>
-                <Button onClick={handleSubmit}></Button>
+                <Button variant="contained" onClick={handleSubmit}>Submit</Button>
                 {error ? <div>{errorMsg}</div> : null}
             </CardContent>
         </Card>
