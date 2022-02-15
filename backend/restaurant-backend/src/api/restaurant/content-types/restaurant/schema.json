@@ -4,7 +4,8 @@
   "info": {
     "singularName": "restaurant",
     "pluralName": "restaurants",
-    "displayName": "restaurant"
+    "displayName": "restaurant",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -15,6 +16,25 @@
       "type": "string"
     },
     "address": {
+      "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ]
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "Link": {
       "type": "string"
     }
   }

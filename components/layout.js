@@ -11,13 +11,15 @@ function Layout ({children}) {
     const router = useRouter()
     var {cart, authenticated, user} = React.useContext(AppContext)
 
+    console.log(authenticated)
+
     return (
         <>
         <AppBar position="static">
             <Toolbar>
                 <Typography component="div" sx={{ flexGrow: 1 }}>Restaurant App</Typography>
                 <ShoppingBagIcon onClick={() => router.push('/checkout')} />
-                {authenticated 
+                {authenticated === true
                     ? <AccountCircleIcon />
                     : <Button variant="filled" onClick={() => router.push('/signin')}>LOGIN</Button>
                 }

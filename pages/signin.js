@@ -6,7 +6,7 @@ import AppContext from '../context/AppContext'
 
 function Signin () {
 
-    var {authenticated} = React.useContext(AppContext)
+    var {setAuthenticated, authenticated} = React.useContext(AppContext)
 
     const router = useRouter()
     const [data, setData] = React.useState({identifier: "", password: ""})
@@ -19,6 +19,7 @@ function Signin () {
                 authenticated = true
                 router.push('/checkout')})
             .catch((err) => {
+                authenticated = false
                 setError(true)
                 setErrorMsg("error")
                 console.log(err)

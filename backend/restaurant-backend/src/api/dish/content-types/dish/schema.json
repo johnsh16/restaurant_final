@@ -1,0 +1,73 @@
+{
+  "kind": "collectionType",
+  "collectionName": "dishes",
+  "info": {
+    "singularName": "dish",
+    "pluralName": "dishes",
+    "displayName": "Dish",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ]
+    },
+    "restaurant": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::restaurant.restaurant"
+    },
+    "cost": {
+      "type": "decimal"
+    },
+    "add": {
+      "type": "json"
+    },
+    "vegetarian": {
+      "type": "boolean"
+    },
+    "vegan": {
+      "type": "boolean"
+    },
+    "gf": {
+      "type": "boolean"
+    },
+    "service": {
+      "type": "enumeration",
+      "enum": [
+        "breakfast",
+        "brunch",
+        "lunch",
+        "dinner"
+      ]
+    },
+    "course": {
+      "type": "enumeration",
+      "enum": [
+        "appetizer",
+        "soup",
+        "salad",
+        "sandwich",
+        "main",
+        "dessert",
+        "side"
+      ]
+    }
+  }
+}

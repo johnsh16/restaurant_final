@@ -1,8 +1,12 @@
 import React from "react";
+import Cookies from 'js-cookie'
 
 const AppContext = React.createContext({
-        authenticated: false,
-        cart: {
+        authenticated: () => {return !(Cookies.get("token") == undefined)},
+        setAuthenticated: (props) => {
+            authenticated = props
+        },
+         cart: {
             items:[],
             total: 0
         },
