@@ -2,7 +2,7 @@ import React from "react";
 import Cookies from 'js-cookie'
 
 const AppContext = React.createContext({
-        authenticated: () => {return !(Cookies.get("token") == undefined)},
+        authenticated: false,
         setAuthenticated: (props) => {
             authenticated = props
         },

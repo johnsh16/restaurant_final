@@ -1,10 +1,11 @@
 import '../styles/globals.css'
-import React from "react"
+import React, { useEffect } from "react"
 import Layout from '../components/layout'
 import AppContext from '../context/AppContext'
 import {Elements} from '@stripe/react-stripe-js'
 import {loadStripe} from '@stripe/stripe-js'
 import {gql, useQuery, ApolloProvider,ApolloClient,HttpLink, InMemoryCache} from '@apollo/client';
+import Cookies from 'js-cookie'
 
 
 
@@ -12,7 +13,7 @@ import {gql, useQuery, ApolloProvider,ApolloClient,HttpLink, InMemoryCache} from
 const stripePromise = loadStripe('pk_test_51KQvCmISIBToTlrNUGZ5akYEYjIMdvkGngvLRwpoV0vJizz9PxV3gIeFdlKfXfApxCcCTyVdXpEkv7GK7fjU262x00A8Ta9Qnf')
 
 function MyApp({ Component, pageProps }) {
-  var {cart, addItem, removeItem, user, setUser, authenticated} = React.useContext(AppContext)
+  var {cart, addItem, removeItem, user, setUser, authenticated, saveToBrowser} = React.useContext(AppContext)
   const [cartState, setCartState] = React.useState({cart: cart})
 
   const options = {
@@ -23,30 +24,36 @@ function MyApp({ Component, pageProps }) {
   const cache = new InMemoryCache()
   const client = new ApolloClient({link, cache})
 
-  authenticated = () => {
-    if (Cookies.get("token") !== undefined) {
-      return true
-    }
-    return false
+  useEffect(() => {
+    console.log("reading from browser")
+    user = Cookies.get('user')
+    cart = Cookies.get('cart')
+  }, [])
+
+  addItem = (item) => {
+    cart.items.push(item)
   }
 
-  addItem = () => {
-
-  }
-
-  removeItem = () => {
+  removeItem = (item) => {
     
   }
 
   setUser = (props) => {
     console.log("Setting user")
     user = props
+    saveToBrowser()
+  }
+
+  saveToBrowser = () => {
+    Cookies.set('cart', cart)
+    Cookies.set('user', user)
+    Cookies.set('authenticated', authenticated)
   }
 
   return (
     <>
     <Elements stripe={stripePromise}>
-    <AppContext.Provider value={{cart: cartState, addItem: addItem, removeItem: removeItem, user:null, setUser: setUser}}>
+    <AppContext.Provider value={{cart: cartState, authenticated: authenticated, addItem: addItem, removeItem: removeItem, setUser: setUser, saveToBrowser: saveToBrowser}}>
     <ApolloProvider client={client}>
       <Layout>
         <Component {...pageProps} />

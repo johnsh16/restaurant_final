@@ -14,7 +14,7 @@ function RestaurantsHome () {
                 console.log(res.data)
                 let restaurantArray = []
                 for (let i=0; i<res.data.data.length; i++) {
-                    restaurantArray.push(res.data.data[i].attributes)
+                    restaurantArray.push(res.data.data[i])
                 }
                 setRestaurants(restaurantArray)
             })
@@ -29,7 +29,7 @@ function RestaurantsHome () {
             />
                 <Stack direction="row" spacing={1}>
                 {restaurants.map((item, i) => (
-                    <RestaurantCard props={item} />
+                    <RestaurantCard data={item.attributes} id={item.id}/>
                 ))}
                 </Stack>
             </Card>
