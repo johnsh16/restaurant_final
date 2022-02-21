@@ -21,6 +21,7 @@ function Menu (props) {
               description
               restaurant {
                 data {
+                  id
                   attributes{
                     name
                   }
@@ -254,7 +255,8 @@ function DishCard (props) {
 
 
     let objRef = props.itemData.attributes
-     
+
+    const [itemObj, setItemObj] = React.useState({item: objRef, add: []})
     const [clicked, setClicked] = React.useState(false)
     const [cost, setCost] = React.useState(objRef.cost)
     const [cart, setCart] = React.useState(props.cart)
@@ -265,15 +267,23 @@ function DishCard (props) {
 
     const addOn = (upcharge, event) => {
         if (event.target.checked) {
-            setCost(cost+upcharge)
+            setCost(cost+upcharge.charge)
+            setItemObj({item: objRef, add:[...itemObj.add, upcharge]})
         } else {
-            setCost(cost-upcharge)
+            setCost(cost-upcharge.charge)
         }
     }
 
     const addToCart = (event) => {
         console.log('cart at submit', cart)
-        saveCart({items: [...cart.items, objRef], total: cart.total + cost})
+        loadCart()
+            .then((res) => {
+                console.log('recieved at the Dish level', res)
+                saveCart({items: [...res.items, itemObj], total: res.total + cost})
+            })
+            .catch((err) => {
+                console.log(err)
+            })
         const addToCart = new Event('addToCart')
         window.dispatchEvent(addToCart)
     }
@@ -313,7 +323,7 @@ function DishCard (props) {
                             <>
                             <Stack direction="row">
                             <Checkbox
-                                onChange={(event) => addOn(item.charge, event)}
+                                onChange={(event) => addOn(item, event)}
                             /> <Typography>{item.description} +{item.charge}</Typography></Stack></>
                         ))}</> :
                         null

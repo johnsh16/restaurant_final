@@ -1,70 +1,102 @@
 import React, { useEffect } from 'react'
-import { Card, CardHeader, FormGroup, TextField, Button } from '@mui/material'
+import { Card, CardHeader, FormGroup, TextField, Button, CircularProgress } from '@mui/material'
 import { loadStripe } from '@stripe/stripe-js'
-import {CardElement, useElements, useStripe, Elements} from '@stripe/react-stripe-js'
-import {submitOrder} from '../lib/orders'
-import AppContext from '../context/AppContext'
+import {PaymentElement, useElements, useStripe, Elements} from '@stripe/react-stripe-js'
 import styles from '../styles/checkout.module.css'
-import Cookies from 'js-cookie'
+import { createPaymentIntent, loadCart } from '../lib/cartFunctions'
 import axios from 'axios'
 
+const stripePromise = loadStripe(String(process.env.NEXT_PUBLIC_STRIPE_PUBLIC))
 
-function PlaceOrder () {
-    console.log("Initialize module")
-    var stripePromise = loadStripe('pk_test_51KQvCmISIBToTlrNUGZ5akYEYjIMdvkGngvLRwpoV0vJizz9PxV3gIeFdlKfXfApxCcCTyVdXpEkv7GK7fjU262x00A8Ta9Qnf')
-    console.log(typeof stripePromise)
+function PlaceOrder (cartProp) {
 
+    const [clientSecret, setClientSecret] = React.useState(null)
+    const [cart, setCart] = React.useState(cartProp)
+
+    const [message, setMessage] = React.useState("")
     const [data, setData] = React.useState({address: "", city: "", state: ""})
-    var {cart} = React.useContext(AppContext)
     
-
-    var stripe = useStripe()
-    var elements = useElements()
-
     useEffect(() => {
-        console.log(Cookies.get("token"))
-    }, [data])
+        loadCart()
+            .then((res) => {
+                setCart(res)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }, [])
+    
+    useEffect(() => {
+        console.log(String(process.env.NEXT_PUBLIC_STRIPE_PUBLIC))
+        createPaymentIntent()
+            .then(res => {
+                console.log(res.data.clientSecret)
+                setClientSecret(res.data.clientSecret)
+            })
+            .catch(err => {
+                console.log(err)
+            }) 
+    }, [])
+
+    
+    const appearence = {
+        theme: 'stripe'
+    }
+    var options = {
+        clientSecret,
+        appearence
+    }
+
     
 
-    async function submit (props) {
+    function CheckoutForm () {
+        const stripe = useStripe()
+        const elements = useElements()
 
-        console.log(props)
-        const cardElement = elements.getElement(CardElement)
-        const token = await stripe.createToken(Elements);
-        const result = await stripe.confirmPayment({
-            //`Elements` instance that was used to create the Payment Element
-            token,
-            confirmParams: {
-              return_url: "https://my-site.com/order/123/complete",
-            },
-          });
-        const userToken = Cookies.get("token");
-        var objData = JSON.stringify({
-            "data": {
-              "Amount": cart.total,
-              "Dishes": cart.items,
-              "Address": data.address,
-              "City": data.city,
-              "State": data.state,
-              "token": token.token.id
+        var submit = () => {
+        
+            if (!stripe || !elements) {
+                return 
             }
-          });
-          
-        var reqObj = axios.create({
-            baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api/orders`,
-            headers: {
-                "Content-Type" : 'application/json',
-                'Authorization': userToken,
-            }
-        })
 
-        reqObj.post("/", objData)
-        .then(res => console.log(res))
-        .catch(err => console.log(err))
+            axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, 
+                {
+                    data : {
+                        Address: data.address,
+                        City: data.city,
+                        State: data.state,
+                        Dishes: cart.items,
+                        Amount: cart.total
+                }}
+                )
+    
+            const { error } = stripe.confirmPayment({
+                elements,
+                confirmParams: {
+                    return_url: "http://localhost:3000/success"
+                }
+            })
+    
+            if (error.type === "card_error" || error.type === "validation_error") {
+                setMessage(error.message);
+            } else {
+                setMessage("An unexpected error occured.");
+            }
+        }  
+
+        return (
+            <>
+            
+            <PaymentElement />
+            <Button onClick={() => submit()}>Submit</Button>
+            {message && <div>{message}</div>}
+            </>
+        )
     }
 
     return (
-        <Card className={styles.place_order}>
+        <Card>
+            <Card className={styles.place_order}>
             <CardHeader 
                 title="Place Order"
             />   
@@ -94,10 +126,10 @@ function PlaceOrder () {
                         }}
                     />
                 </FormGroup>
-                <Elements loadStripe={stripePromise}>
-                    <CardElement />
-                </Elements>
-                <Button onClick={() => submit(data)}>Submit</Button>
+            </Card>
+                {clientSecret && stripePromise ? (<Elements stripe={stripePromise} options={options}>
+                    <CheckoutForm />
+                </Elements>) : <CircularProgress />}
         </Card>
     )
 }

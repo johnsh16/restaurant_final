@@ -3,7 +3,7 @@ import Menu from '../../components/Menu'
 import { useRouter } from 'next/router'
 import {gql, useQuery } from '@apollo/client';
 import RestaurantCard_Menu from '../../components/smaller_components/RestaurantCard_Menu'
-import {Typography, Divider, Box} from "@mui/material"
+import {Typography, Divider, Box, Button} from "@mui/material"
 import styles from '../../styles/Menu.module.css'
 import {loadCart, savePage, loadPage} from '../../lib/cartFunctions'
 
@@ -15,20 +15,17 @@ function View () {
     const [cart, setCart] = React.useState()
     const [updater, setUpdater] = React.useState(false)
 
-    useEffect(() => {
-        window.addEventListener('addToCart', function () {
-            console.log("Trigger reload of view/[id]")
-            setUpdater(!updater)
-            loadCart()
-                .then((res) => {
-                    console.log("Cart loaded: ", res)
-                    setCart(res)
-                })
-                .catch((err) => {
-                    console.log(err)
-                })
-        })
-    }, [])
+    window.addEventListener('addToCart', function () {
+        console.log("Trigger reload of view/[id]")
+        loadCart()
+            .then((res) => {
+                console.log("Cart loaded: ", res)
+                setCart(res)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    })
     
     useEffect(() => {
         console.log('Loading cart...')
@@ -93,7 +90,8 @@ function View () {
             <Box className={styles.menuTitle}>
                 <Typography>MENU</Typography>
             </Box>
-            <Menu name={data.restaurant.data.attributes.name} cart={cart}/>
+            <Menu name={data.restaurant.data.attributes.name} cart={cart} update={updater}/>
+            <Button onClick={() => {console.log(cart)}}>Check cart</Button>
             </>
         )
     } else {

@@ -5,8 +5,13 @@
 .order_summary {
     width: 45vw;
     margin-left: 5%;
+    overflow-y: scroll;
 }
 
 .card_row {
     margin-left: 10px;
+}
+
+.itemComponent {
+    width: 50%;
 }

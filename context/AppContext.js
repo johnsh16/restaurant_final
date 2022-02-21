@@ -6,13 +6,14 @@ const AppContext = React.createContext({
         setAuthenticated: (props) => {
             authenticated = props
         },
-         cart: {
+        cart: {
             items:[],
             total: 0
         },
         addItem: () => {},
         removeItem: () => {},
         user: false,
-        setUser:() => {}
+        setUser:() => {},
+        saveToBrowser: () => {}
     })
 export default AppContext

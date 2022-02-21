@@ -19,9 +19,13 @@ function Layout ({children}) {
 
     useEffect(() => {
         window.addEventListener('addToCart', function (e) {
-            console.log('heard')
-            setUpdater(!updater)
+            loadCart()
+            .then(res => setCartState(res))
+            .catch(err => console.log(err)) 
         })
+    }, [cartState])
+
+    useEffect(() => {
         loadCart()
             .then(res => setCartState(res))
             .catch(err => console.log(err)) 
