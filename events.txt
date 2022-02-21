@@ -1,2 +1,2 @@
 Events:
-'addToCard' - when an item is added to the cart, the Layout function is listening and displays items being added to the cart.
+'addToCart' - when an item is added to the cart, the Layout function is listening and displays items being added to the cart.

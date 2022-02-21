@@ -5,10 +5,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest"
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.4.1",
@@ -16,14 +19,25 @@
     "@stripe/react-stripe-js": "^1.7.0",
     "@stripe/stripe-js": "^1.22.0",
     "axios": "^0.25.0",
+    "babel-jest": "^27.5.1",
+    "browserify": "^17.0.0",
+    "browserify-fs": "^1.0.0",
+    "fs": "^0.0.1-security",
     "js-cookie": "^3.0.1",
+    "net": "^1.0.2",
     "next": "12.0.10",
+    "path": "^0.12.7",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "strapi": "^3.6.8"
+    "react-test-renderer": "^17.0.2",
+    "redis": "^4.0.3",
+    "strapi": "^3.6.8",
+    "tls": "^0.0.1",
+    "write": "^2.0.0"
   },
   "devDependencies": {
     "eslint": "8.8.0",
-    "eslint-config-next": "12.0.10"
+    "eslint-config-next": "12.0.10",
+    "jest": "^27.5.1"
   }
 }

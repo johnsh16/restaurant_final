@@ -1,3 +1,4 @@
+import React from 'react'
 import {Box, TextField, Stack, Button, InputAdornment, Typography} from "@mui/material"
 import styles from '../styles/Home.module.css'
 import SearchIcon from '@mui/icons-material/Search';

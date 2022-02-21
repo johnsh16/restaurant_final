@@ -5,16 +5,19 @@ import AppContext from '../context/AppContext'
 import {Elements} from '@stripe/react-stripe-js'
 import {loadStripe} from '@stripe/stripe-js'
 import {gql, useQuery, ApolloProvider,ApolloClient,HttpLink, InMemoryCache} from '@apollo/client';
-import Cookies from 'js-cookie'
+import {loadCart} from '../lib/cartFunctions'
+import {Button} from '@mui/material'
+import "regenerator-runtime/runtime.js"
 
 
 
+//const stripePromise = await loadStripe('pk_test_51KQvCmISIBToTlrNUGZ5akYEYjIMdvkGngvLRwpoV0vJizz9PxV3gIeFdlKfXfApxCcCTyVdXpEkv7GK7fjU262x00A8Ta9Qnf')
 
-const stripePromise = loadStripe('pk_test_51KQvCmISIBToTlrNUGZ5akYEYjIMdvkGngvLRwpoV0vJizz9PxV3gIeFdlKfXfApxCcCTyVdXpEkv7GK7fjU262x00A8Ta9Qnf')
+
 
 function MyApp({ Component, pageProps }) {
   var {cart, addItem, removeItem, user, setUser, authenticated, saveToBrowser} = React.useContext(AppContext)
-  const [cartState, setCartState] = React.useState({cart: cart})
+  const [cartState, setCartState] = React.useState(loadCart())
 
   const options = {
     clientSecret: process.env.NEXT_PUBLIC_STRIPE_SECRET
@@ -25,10 +28,8 @@ function MyApp({ Component, pageProps }) {
   const client = new ApolloClient({link, cache})
 
   useEffect(() => {
-    console.log("reading from browser")
-    user = Cookies.get('user')
-    cart = Cookies.get('cart')
-  }, [])
+    console.log(cartState)
+  }, [cartState])
 
   addItem = (item) => {
     cart.items.push(item)
@@ -41,26 +42,22 @@ function MyApp({ Component, pageProps }) {
   setUser = (props) => {
     console.log("Setting user")
     user = props
-    saveToBrowser()
-  }
 
-  saveToBrowser = () => {
-    Cookies.set('cart', cart)
-    Cookies.set('user', user)
-    Cookies.set('authenticated', authenticated)
   }
 
   return (
     <>
-    <Elements stripe={stripePromise}>
-    <AppContext.Provider value={{cart: cartState, authenticated: authenticated, addItem: addItem, removeItem: removeItem, setUser: setUser, saveToBrowser: saveToBrowser}}>
+    <AppContext.Provider value={{cart: cartState, authenticated: authenticated, addItem: addItem, removeItem: removeItem, setUser: setUser}}>
     <ApolloProvider client={client}>
       <Layout>
         <Component {...pageProps} />
       </Layout>
+      <Button onClick={()=>
+        loadCart()
+          .then(res => console.log(res))
+        }>Test Redis</Button>
     </ApolloProvider>
     </AppContext.Provider>
-    </Elements>
     </>
   )
 }

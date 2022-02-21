@@ -1,10 +1,12 @@
 import React from 'react'
 import { Card, CardHeader, CardActionArea, CardContent, Typography, Checkbox, Stack, Button } from "@mui/material"
-import {gql, useQuery, ApolloProvider,ApolloClient,HttpLink, InMemoryCache} from '@apollo/client';
-import { CommentsDisabledOutlined, ContactSupportOutlined } from '@mui/icons-material';
+import { gql, useQuery } from '@apollo/client';
 import { useEffect } from 'react';
 import styles from '../styles/Menu.module.css'
 import AppContext from '../context/AppContext'
+import {saveCart, loadCart} from '../lib/cartFunctions'
+
+
 
 
 function Menu (props) {
@@ -46,6 +48,7 @@ function Menu (props) {
     const [brunch, setBrunch] = React.useState([])
     const [lunch, setLunch] = React.useState([])
     const [dinner, setDinner] = React.useState([])
+    
 
     useEffect(() => {
         if (!loading && !error) {
@@ -75,7 +78,6 @@ function Menu (props) {
             }
             var waitForLoad = setInterval(() => {
                 if (restaurantDishes.length === breakfast.length + lunch.length + brunch.length + dinner.length) {
-                    console.log(restaurantDishes)
                     clearInterval(waitForLoad)
                     setArraysLoaded(true)
                 }
@@ -85,27 +87,23 @@ function Menu (props) {
     }, [data])
 
 
-
-    
-
     if (arraysLoaded == true) {
-        console.log(breakfast, brunch, lunch, dinner)
         return (
             <>
             {breakfast.length > 0 
-                ? <MenuLayout course={'breakfast'} data={breakfast}/> 
+                ? <MenuLayout id="breakfastComponent" course={'breakfast'} data={breakfast} cart={props.cart}/> 
                 : null
             }
             {brunch.length > 0 
-                ? <MenuLayout id="brunchComponent" course={'brunch'} data={brunch}/> 
+                ? <MenuLayout id="brunchComponent" course={'brunch'} data={brunch} cart={props.cart}/> 
                 : null
             }
             {lunch.length > 0 
-                ? <MenuLayout id="lunchComponent" course={'lunch'} data={lunch}/> 
+                ? <MenuLayout id="lunchComponent" course={'lunch'} data={lunch} cart={props.cart}/> 
                 : null
             }
             {dinner.length > 0 
-                ? <MenuLayout id="dinnerComponent" course={'dinner'} data={dinner}/> 
+                ? <MenuLayout id="dinnerComponent" course={'dinner'} data={dinner} cart={props.cart}/> 
                 : null
             }
             </>
@@ -129,12 +127,12 @@ function MenuLayout (props) {
     console.log(props)
 
     var openClick = () => {
-        console.log("fired")
         setClicked(true)
-        let courseCard = document.getElementById(`courseCard-${props.course}`).getBoundingClientRect();
-        console.log(courseCard)
-        window.scrollTo(0, 100)
     }
+
+    useEffect(() => {
+        console.log('menuLayout', props.cart)
+    }, [])
 
     if (clicked) {
         return (
@@ -150,7 +148,7 @@ function MenuLayout (props) {
                         <Typography>Appetizers</Typography>
                         {
                             courses.appetizer.map((item, i) => (
-                                <DishCard props={item} key={i} />
+                                <DishCard itemData={item} key={i} cart={props.cart}/>
                             ))
                         }
                         </>
@@ -161,7 +159,7 @@ function MenuLayout (props) {
                         <Typography>Soups</Typography>
                         {
                             courses.soup.map((item, i) => (
-                                <DishCard props={item} key={i} />
+                                <DishCard itemData={item} key={i} cart={props.cart}/>
                             ))
                         }
                         </>
@@ -172,7 +170,7 @@ function MenuLayout (props) {
                         <Typography>Salads</Typography>
                         {
                             courses.salad.map((item, i) => (
-                                <DishCard props={item} key={i} />
+                                <DishCard itemData={item} key={i} cart={props.cart}/>
                             ))
                         }
                         </>
@@ -183,7 +181,7 @@ function MenuLayout (props) {
                         <Typography>Sandwiches</Typography>
                         {
                             courses.sandwich.map((item, i) => (
-                                <DishCard props={item} key={i} />
+                                <DishCard itemData={item} key={i} cart={props.cart}/>
                             ))
                         }
                         </>
@@ -194,7 +192,7 @@ function MenuLayout (props) {
                         <Typography>Main Courses</Typography>
                         {
                             courses.main.map((item, i) => (
-                                <DishCard props={item} key={i} />
+                                <DishCard itemData={item} key={i} cart={props.cart}/>
                             ))
                         }
                         </>
@@ -205,7 +203,7 @@ function MenuLayout (props) {
                         <Typography>Desserts</Typography>
                         {
                             courses.dessert.map((item, i) => (
-                                <DishCard props={item} key={i} />
+                                <DishCard itemData={item} key={i} cart={props.cart}/>
                             ))
                         }
                         </>
@@ -216,7 +214,7 @@ function MenuLayout (props) {
                         <Typography>Side Orders</Typography>
                         {
                             courses.side.map((item, i) => (
-                                <DishCard props={item} key={i} />
+                                <DishCard itemData={item} key={i} cart={props.cart}/>
                             ))
                         }
                         </>
@@ -227,7 +225,7 @@ function MenuLayout (props) {
                         <Typography>Other Items</Typography>
                         {
                             courses.misc.map((item, i) => (
-                                <DishCard props={item} key={i} />
+                                <DishCard itemData={item} key={i} cart={props.cart}/>
                             ))
                         }
                         </>
@@ -254,12 +252,16 @@ function MenuLayout (props) {
 
 function DishCard (props) {
 
-    let objRef = props.props.attributes
 
-    var {cart, addItem} = React.useContext(AppContext)
+    let objRef = props.itemData.attributes
      
     const [clicked, setClicked] = React.useState(false)
     const [cost, setCost] = React.useState(objRef.cost)
+    const [cart, setCart] = React.useState(props.cart)
+
+    useEffect(() => {
+        console.log(`DishCard cart ${objRef.name}`, props.cart)
+    }, [])
 
     const addOn = (upcharge, event) => {
         if (event.target.checked) {
@@ -270,9 +272,8 @@ function DishCard (props) {
     }
 
     const addToCart = (event) => {
-        cart.cart.items.push(props.props)
-        cart.cart.total += cost
-        console.log(cart)
+        console.log('cart at submit', cart)
+        saveCart({items: [...cart.items, objRef], total: cart.total + cost})
         const addToCart = new Event('addToCart')
         window.dispatchEvent(addToCart)
     }
@@ -317,7 +318,7 @@ function DishCard (props) {
                         ))}</> :
                         null
                     }
-                    <Button color="success" onClick={addToCart}>Add To Basket</Button>
+                    <Button color="success" onClick={addToCart} id={`${props.itemData.attributes.name}-submit`}>Add To Basket</Button>
                 </CardContent>
             </Card>
             </>
