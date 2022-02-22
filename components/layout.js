@@ -33,9 +33,9 @@ function Layout ({children}) {
 
     return (
         <>
-        <AppBar position="static">
+        <AppBar position="static" sx={{marginBottom: "10px"}}>
             <Toolbar>
-                <Typography component="div" sx={{ flexGrow: 1 }}>Restaurant App</Typography>
+                <Typography component="div" sx={{ flexGrow: 1 }}><a href="/">Restaurant App</a></Typography>
                 <Badge badgeContent={cartState.items.length} color="secondary" update={updater}><ShoppingBagIcon onClick={() => router.push('/checkout')} /></Badge>
                 {authenticated === true
                     ? <AccountCircleIcon />

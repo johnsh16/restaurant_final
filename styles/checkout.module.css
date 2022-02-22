@@ -1,11 +1,24 @@
 .place_order {
     width: 45vw;
+    margin-top: 10px;
 }
 
 .order_summary {
-    width: 45vw;
-    margin-left: 5%;
+    width: 30vw;
+    margin-left: 10%;
+    max-height: 70vh;
     overflow-y: scroll;
+}
+
+.order_summary::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+}
+
+.order_summary::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, .5);
+    box-shadow: 0 0 1px rgba(255, 255, 255, .5);
 }
 
 .card_row {
@@ -13,5 +26,10 @@
 }
 
 .itemComponent {
-    width: 50%;
+    width: 70%;
+    margin: auto;
+    margin-bottom: 5px;
 }
+
+
+  

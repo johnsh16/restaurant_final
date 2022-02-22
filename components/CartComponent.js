@@ -1,30 +1,38 @@
 import React, { useEffect } from 'react'
-import {Card, CardContent, CardHeader, Typography, CardActions, Button, CircularProgress, Box} from '@mui/material'
+import {Card, CardContent, CardHeader, Typography, CardActions, Button, CircularProgress, Box, Divider} from '@mui/material'
 import AppContext from '../context/AppContext'
 import styles from '../styles/checkout.module.css'
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import InfoIcon from '@mui/icons-material/Info';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import { loadCart, saveCart } from '../lib/cartFunctions';
+import { useRouter } from 'next/router'
 
-function CartComponent (cartProp) {
+function CartComponent () {
 
     const [cart, setCart] = React.useState()
     const [total, setTotal] = React.useState(0)
     const [wholeCart, setWholeCart] = React.useState({})
+    const [reload, setReload] = React.useState(false)
 
-    window.addEventListener('addToCart', function () {
-        console.log("Trigger reload of CartComponent")
-        loadCart()
-            .then((res) => {
-                console.log("Cart loaded: ", res)
-                setTotal(res.total)
-                setCart(parseCart(res.items))
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-    })
+    const router = useRouter()
+    
+    useEffect(() => {
+        window.addEventListener('addToCart', function () {
+            console.log("Trigger reload of CartComponent")
+            loadCart()
+                .then((res) => {
+                    console.log("Cart loaded: ", res)
+                    setTotal(res.total)
+                    setCart(parseCart(res.items))
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        })
+    }, [])
+    
 
     useEffect(() => {
         loadCart()
@@ -62,6 +70,9 @@ function CartComponent (cartProp) {
         <Card className={styles.order_summary}>
             <CardHeader
                 title="Your Cart"
+                action={
+                    <Button onClick={() => setReload(!reload)}><RefreshIcon /></Button>
+                }
             />
             <CardContent>
             {cart !== undefined 
@@ -71,7 +82,7 @@ function CartComponent (cartProp) {
                 ))
             }</> : <CircularProgress />
             }
-            <Box sx={{bgColor:'grey'}}>
+            <Box sx={{bgcolor:'lightgray', width:"50%", margin: "auto"}}>
                 <Typography>
                     Total: ${total.toFixed(2)}
                 </Typography>
@@ -83,24 +94,60 @@ function CartComponent (cartProp) {
 
 export default CartComponent
 
-function ItemComponent (item, completeCart) {
+function ItemComponent (item) {
 
+    
     const [displayInfo, setDisplayInfo] = React.useState(false)
+    const [incremented, setIncremented] = React.useState(false)
+    const [decremented, setDecremented] = React.useState(false)
 
-    console.log(completeCart)
+    function resetLoaders () {
+        setIncremented(false)
+        setDecremented(false)
+    }
+
+    useEffect(() => {
+        resetLoaders()
+    }, [item])
+
 
     function incrementDish () {
-        loadCart()
-            .then(res => {  
-                saveCart({items: [...res.items, item.itemObj], total: res.total + item.itemObj.item.cost})
-            })
-            .catch(err => console.log(err))
+        setIncremented(true)
+        let itemsArray = item.completeCart
+        itemsArray.push(item.item.itemObj)
+        let newTotal = 0
+        for (let i = 0; i<item.completeCart.length; i++) {
+            console.log("new total", newTotal)
+            newTotal += item.completeCart[i].item.cost
+        }
+        console.log(newTotal)
+        console.log('test increment', itemsArray, newTotal)
+        saveCart({items: itemsArray, total: newTotal})
         const addToCart = new Event ('addToCart')
         window.dispatchEvent(addToCart)
     }
 
     function decrementDish () {
-
+        setDecremented(true)
+        let indexAt = null
+        let newCart = item.completeCart
+        for (let i = 0; i<item.completeCart.length; i++) {
+            if (item.completeCart[i].item.name === item.item.itemObj.item.name) {
+                indexAt = i
+                console.log(item.completeCart[i].item.name)
+                break
+            }
+        }
+        newCart.splice(indexAt, 1)
+        let newTotal = 0
+        for (let i = 0; i<newCart.length; i++) {
+            console.log("new total", newTotal)
+            newTotal += newCart[i].item.cost
+        }
+        console.log(newCart, newTotal)
+        saveCart({items: newCart, total: newTotal})
+        const addToCart = new Event ('addToCart')
+        window.dispatchEvent(addToCart)
     }
 
     if (!displayInfo) {
@@ -114,10 +161,14 @@ function ItemComponent (item, completeCart) {
                     <Typography variant="body2">
                         From: {item.item.itemObj.item.restaurant.data.attributes.name}
                     </Typography>
+                    <Divider />
+                    <Typography variant="body1">
+                        {item.item.count} items @ ${item.item.itemObj.item.cost.toFixed(2)}
+                    </Typography>
                 </CardContent>
                 <CardActions>
-                    <Button><AddIcon onClick={incrementDish} /></Button>
-                    <Button><RemoveIcon /></Button>
+                    {!incremented ? <Button><AddIcon onClick={incrementDish} /></Button> : <CircularProgress />}
+                    {!decremented ? <Button onClick={decrementDish}><RemoveIcon /></Button> : <CircularProgress />}
                     <Button onClick={() => setDisplayInfo(!displayInfo)}><InfoIcon /></Button>
                 </CardActions>
             </Card>

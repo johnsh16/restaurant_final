@@ -95,7 +95,6 @@ function PlaceOrder (cartProp) {
     }
 
     return (
-        <Card>
             <Card className={styles.place_order}>
             <CardHeader 
                 title="Place Order"
@@ -126,11 +125,12 @@ function PlaceOrder (cartProp) {
                         }}
                     />
                 </FormGroup>
-            </Card>
                 {clientSecret && stripePromise ? (<Elements stripe={stripePromise} options={options}>
                     <CheckoutForm />
                 </Elements>) : <CircularProgress />}
-        </Card>
+            </Card>
+                
+
     )
 }
 
