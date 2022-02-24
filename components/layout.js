@@ -1,21 +1,32 @@
-import React, {useContext, useEffect} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import { useRouter } from 'next/router'
-import {Box, AppBar, Toolbar, Button, IconButton, Typography, Badge} from "@mui/material"
-import MenuIcon from '@mui/icons-material/Menu'
-import AppContext from '../context/AppContext'
-import { AccountCircleIcon } from '@mui/icons-material'
-import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
-import {loadCart} from "../lib/cartFunctions"
+import {Box, AppBar, Toolbar, Button, IconButton, Typography, Badge, Dialog, DialogTitle, CircularProgress, } from "@mui/material"
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import { loadCart } from "../lib/cartFunctions"
+import { getRedisAuth } from '../lib/auth'
+import { useUser } from '@auth0/nextjs-auth0'
 
 function Layout ({children}) {
 
     const router = useRouter()
-    var {authenticated, user} = React.useContext(AppContext)
     const [updater, setUpdater] = React.useState(false)
     const [cartState, setCartState] = React.useState({items: [], total: 0})
+    const [userObj, setUserObj] = React.useState()
+    const [displayAccount, setDisplayAccount] = React.useState(false)
+        var openAccount = () => {
+            setDisplayAccount(true)
+        }
 
-    console.log(cartState)
-    console.log(authenticated)
+    const { user, isLoading } = useUser()
+
+
+    useEffect(() => {
+        loadCart()
+            .then(res => setCartState(res))
+            .catch(err => console.log(err)) 
+    }, [])
+
 
     useEffect(() => {
         window.addEventListener('addToCart', function (e) {
@@ -26,26 +37,97 @@ function Layout ({children}) {
     }, [cartState])
 
     useEffect(() => {
-        loadCart()
-            .then(res => setCartState(res))
-            .catch(err => console.log(err)) 
+        getRedisAuth()
+            .then((res) => {
+                console.log(res)
+                if (typeof res.data === 'object') {
+                    setUserObj(res.data.user)
+                } else {
+                    console.log(typeof res.data)
+                }
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     }, [])
 
+    useEffect(() => {
+        window.addEventListener('loggedIn', function () {
+            getRedisAuth()
+                .then(res => {
+                    setUserObj(res.data.user)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        })
+    }, [])
+
+
+    function AccountDialog () {
+
+        
+
+        if (userObj) {
+            console.log('userObj', userObj)
+            return (
+                <>
+                <Dialog
+                        open={displayAccount}
+                        onClose={() => setDisplayAccount(false)}
+                    >
+                <Typography>Logged in as {userObj.email}</Typography>
+                <Button onClick={() => {router.push('/api/auth/logout'); setDisplayAccount(false)}}>Logout</Button>
+                </Dialog>
+                </>
+            )
+        } else if (user || isLoading) {
+            return (
+                <>
+                <Dialog
+                        open={displayAccount}
+                        onClose={() => setDisplayAccount(false)}
+                    >
+                {isLoading ? <Typography>Logged in as: <CircularProgress /></Typography> : <Typography>Logged in as: {user.email}</Typography>}
+                <Button onClick={() => {router.push('/api/auth/logout'); setDisplayAccount(false)}}>Logout</Button>
+                </Dialog>
+                </>
+            )
+        } else {
+            return (
+                <>
+                <Dialog
+                        open={displayAccount}
+                        onClose={() => setDisplayAccount(false)}
+                    >
+                        <Button onClick={() => {router.push('/api/auth/login'); setDisplayAccount(false)}}>Login</Button>
+                        <Button onClick={() => {router.push('/api/auth/login'); setDisplayAccount(false)}}>Sign Up</Button>
+                </Dialog>
+                </>
+            )
+        }
+            
+    }
+
+    
+
+
+    
     return (
         <>
         <AppBar position="static" sx={{marginBottom: "10px"}}>
             <Toolbar>
-                <Typography component="div" sx={{ flexGrow: 1 }}><a href="/">Restaurant App</a></Typography>
+                <Typography component="div" sx={{ flexGrow: 1}}><a href="/">Restaurant App</a></Typography>
                 <Badge badgeContent={cartState.items.length} color="secondary" update={updater}><ShoppingBagIcon onClick={() => router.push('/checkout')} /></Badge>
-                {authenticated === true
-                    ? <AccountCircleIcon />
-                    : <Button variant="filled" onClick={() => router.push('/signin')}>LOGIN</Button>
-                }
+                <AccountCircleIcon sx={{padding: "1%"}} onClick={openAccount} />
+                <AccountDialog />
             </Toolbar>
         </AppBar>
         {children}
         </>
     )
+    
+    
 }
 
 export default Layout

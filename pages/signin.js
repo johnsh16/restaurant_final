@@ -6,8 +6,6 @@ import AppContext from '../context/AppContext'
 
 function Signin () {
 
-    var {setAuthenticated, authenticated} = React.useContext(AppContext)
-
     const router = useRouter()
     const [data, setData] = React.useState({identifier: "", password: ""})
     const [error, setError] = React.useState(false)
@@ -15,11 +13,12 @@ function Signin () {
 
     function handleSubmit () {
         loginUser(data)
-            .then(() => {
-                authenticated = true
-                router.push('/checkout')})
+            .then((res) => {
+                const loggedIn = new Event ('loggedIn')
+                window.dispatchEvent(loggedIn)
+                router.push('/')
+            })
             .catch((err) => {
-                authenticated = false
                 setError(true)
                 setErrorMsg("error")
                 console.log(err)

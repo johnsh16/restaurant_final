@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
+    "@auth0/nextjs-auth0": "^1.7.0",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@emotion/react": "^11.7.1",
@@ -29,6 +30,7 @@
     "path": "^0.12.7",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-error-boundary": "^3.1.4",
     "react-test-renderer": "^17.0.2",
     "redis": "^4.0.3",
     "strapi": "^3.6.8",
