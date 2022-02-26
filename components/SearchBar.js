@@ -13,6 +13,7 @@ function SearchBar () {
                 data {
                     attributes {
                         name
+                        city
                     }
                 }
             }

@@ -15,7 +15,8 @@ function View () {
     const [cart, setCart] = React.useState()
     const [updater, setUpdater] = React.useState(false)
 
-    window.addEventListener('addToCart', function () {
+    useEffect(() => {
+        window.addEventListener('addToCart', function () {
         console.log("Trigger reload of view/[id]")
         loadCart()
             .then((res) => {
@@ -25,7 +26,8 @@ function View () {
             .catch((err) => {
                 console.log(err)
             })
-    })
+        })
+    }, [])
     
     useEffect(() => {
         console.log('Loading cart...')

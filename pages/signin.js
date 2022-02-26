@@ -2,7 +2,6 @@ import React from 'react'
 import {Card, CardHeader, TextField, CardContent, FormGroup, Button} from '@mui/material'
 import {loginUser} from '../lib/auth.js'
 import {useRouter} from 'next/router'
-import AppContext from '../context/AppContext'
 
 function Signin () {
 

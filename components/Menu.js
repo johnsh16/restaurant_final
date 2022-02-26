@@ -3,7 +3,6 @@ import { Card, CardHeader, CardActionArea, CardContent, Typography, Checkbox, St
 import { gql, useQuery } from '@apollo/client';
 import { useEffect } from 'react';
 import styles from '../styles/Menu.module.css'
-import AppContext from '../context/AppContext'
 import {saveCart, loadCart} from '../lib/cartFunctions'
 
 
@@ -77,12 +76,15 @@ function Menu (props) {
                    }
                 }
             }
-            var waitForLoad = setInterval(() => {
+            /**
+             * var waitForLoad = setInterval(() => {
                 if (restaurantDishes.length === breakfast.length + lunch.length + brunch.length + dinner.length) {
                     clearInterval(waitForLoad)
                     setArraysLoaded(true)
                 }
             }, 10)
+             */
+            
             setRestaurantDishes(filteredArray)
         }
     }, [data])

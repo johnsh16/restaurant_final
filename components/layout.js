@@ -23,7 +23,9 @@ function Layout ({children}) {
 
     useEffect(() => {
         loadCart()
-            .then(res => setCartState(res))
+            .then(res => {
+                console.log(res)
+                setCartState(res)})
             .catch(err => console.log(err)) 
     }, [])
 

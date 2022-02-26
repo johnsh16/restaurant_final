@@ -1,15 +1,12 @@
 import React from 'react'
 import {Card, FormGroup, Text, TextField, CardHeader, CardContent, Button} from "@mui/material"
 import {registerUser} from "../lib/auth.js"
-import AppContext from "../context/AppContext"
-import axios from 'axios'
 import {useRouter} from 'next/router'
 
 function Signup () {
 
     var router = useRouter()
 
-    var {setUser, authenticated} = React.useContext(AppContext)
     const [data, setData] = React.useState({email: "", password: "", first: "", last: "", username: ""})
 
     function handleSubmit () {

@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import {Card, CardContent, CardHeader, Typography, CardActions, Button, CircularProgress, Box, Divider} from '@mui/material'
-import AppContext from '../context/AppContext'
 import styles from '../styles/checkout.module.css'
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
