@@ -6,6 +6,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import { loadCart } from "../lib/cartFunctions"
 import { getRedisAuth } from '../lib/auth'
 import { useUser } from '@auth0/nextjs-auth0'
+import Link from 'next/link'
 
 function Layout ({children}) {
 
@@ -119,7 +120,7 @@ function Layout ({children}) {
         <>
         <AppBar position="static" sx={{marginBottom: "10px"}}>
             <Toolbar>
-                <Typography component="div" sx={{ flexGrow: 1}}><a href="/">Restaurant App</a></Typography>
+                <Typography component="div" sx={{ flexGrow: 1}}><Link href="/">Restaurant App</Link></Typography>
                 <Badge badgeContent={cartState.items.length} color="secondary" update={updater}><ShoppingBagIcon onClick={() => router.push('/checkout')} /></Badge>
                 <AccountCircleIcon sx={{padding: "1%"}} onClick={openAccount} />
                 <AccountDialog />

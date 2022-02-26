@@ -29,7 +29,7 @@ function RestaurantsHome () {
             />
                 <Stack direction="row" spacing={1}>
                 {restaurants.map((item, i) => (
-                    <RestaurantCard data={item.attributes} id={item.id}/>
+                    <RestaurantCard key={i} data={item.attributes} id={item.id}/>
                 ))}
                 </Stack>
             </Card>
