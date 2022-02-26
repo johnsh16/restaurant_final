@@ -4,7 +4,6 @@ import Layout from '../components/Layout'
 import {ApolloProvider,ApolloClient,HttpLink, InMemoryCache} from '@apollo/client';
 import "regenerator-runtime/runtime.js"
 import { UserProvider } from '@auth0/nextjs-auth0'
-import {ErrorBoundary} from 'react-error-boundary'
 
 
 function MyApp({ Component, pageProps }) {

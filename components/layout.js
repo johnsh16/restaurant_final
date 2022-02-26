@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react'
 import { useRouter } from 'next/router'
-import {Box, AppBar, Toolbar, Button, IconButton, Typography, Badge, Dialog, DialogTitle, CircularProgress, } from "@mui/material"
+import {AppBar, Toolbar, Button, Typography, Badge, Dialog, CircularProgress, } from "@mui/material"
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import { loadCart } from "../lib/cartFunctions"
