@@ -76,14 +76,12 @@ function Menu (props) {
                    }
                 }
             }
-            /**
-             * var waitForLoad = setInterval(() => {
+            var waitForLoad = setInterval(() => {
                 if (restaurantDishes.length === breakfast.length + lunch.length + brunch.length + dinner.length) {
                     clearInterval(waitForLoad)
                     setArraysLoaded(true)
                 }
             }, 10)
-             */
             
             setRestaurantDishes(filteredArray)
         }

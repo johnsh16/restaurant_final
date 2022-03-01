@@ -6,6 +6,7 @@ import "regenerator-runtime/runtime.js"
 import { UserProvider } from '@auth0/nextjs-auth0'
 
 
+
 function MyApp({ Component, pageProps }) {
 
   const link = new HttpLink({uri : `${process.env.NEXT_PUBLIC_API_URL}/graphql`})

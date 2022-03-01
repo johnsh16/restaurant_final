@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
-import {Box, TextField, Stack, Button, InputAdornment, Typography, Grid, CircularProgress, Dialog, Divider} from "@mui/material"
-import {useQuery, gql, useLazyQuery} from '@apollo/client'
+import React from 'react'
+import {Box, TextField, Button, InputAdornment, Typography, Grid, CircularProgress, Dialog, Divider} from "@mui/material"
+import {useQuery, gql} from '@apollo/client'
 import styles from '../styles/Home.module.css'
 import SearchIcon from '@mui/icons-material/Search';
 import { indigo } from '@mui/material/colors'

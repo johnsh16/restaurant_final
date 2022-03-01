@@ -59,7 +59,7 @@ function PlaceOrder (cartProp) {
                 return 
             }
 
-            axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, 
+            axios.post(`${process.env.NEXT_PUBLIC_sAPI_URL}/api/orders`, 
                 {
                     data : {
                         Address: data.address,
