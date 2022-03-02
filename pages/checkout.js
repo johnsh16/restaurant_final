@@ -8,24 +8,12 @@ import {loadCart} from '../lib/cartFunctions'
 
 function Checkout () {
 
-    const [cart, setCart] = React.useState()
-
-    useEffect(() => {
-        loadCart()
-            .then(res => {
-                setCart(res)
-            })
-            .catch(err => {
-                console.log(err)
-            }) 
-    }, [])
-
     return (
         <>
         <div className={styles.card_row}>
         <Stack direction="row" spacing={1}>
-            <CartComponent cart={cart}/>
-            <PlaceOrder cart={cart}/>
+            <CartComponent/>
+            <PlaceOrder/>
         </Stack>
         </div>
         </>

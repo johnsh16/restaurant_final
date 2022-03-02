@@ -11,6 +11,7 @@ function RestaurantCard (props) {
 
     const bp1 = useMediaQuery('(min-height: 650px)')
     const bp2 = useMediaQuery('(min-height: 575px)')
+    const bp3 = useMediaQuery('(min-height: 450px)')
 
     if (bp1) {
         return (
@@ -89,13 +90,13 @@ function RestaurantCard (props) {
             </Card>
             </>
         )
-    } else {
+    } else if (!bp1 && !bp2 && bp3) {
         return (
             <>
             <Card 
                 className={styles.restaurantCard}
                 sx={{
-                    height:"45vh"
+                    height:"42vh"
                 }}
             >
                 <CardHeader
@@ -122,7 +123,40 @@ function RestaurantCard (props) {
             </Card>
             </>
         )
-    } 
+    } else {
+        return (
+            <>
+            <Card 
+                className={styles.restaurantCard}
+                sx={{
+                    height:"40vh"
+                }}
+            >
+                <CardHeader
+                    title={props.data.name}
+                    sx={{
+                        height:"10%",
+                    }}
+                    titleTypographyProps={{variant:"body"}}
+                />
+                <CardMedia
+                    component="img"
+                    height="50"
+                    maxWidth="200"
+                    image={`${process.env.NEXT_PUBLIC_API_URL}${props.data.image.data.attributes.url}`}
+                    sx={{}}
+                />
+                <CardContent
+                    sx={{
+                        height: "10%"
+                    }}
+                >
+                    <Button onClick={() => router.push(`/view/${props.id}`)}>View Menu</Button>
+                </CardContent>
+            </Card>
+            </>
+        )
+    }
     
 }
 

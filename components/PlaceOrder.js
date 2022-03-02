@@ -8,10 +8,11 @@ import axios from 'axios'
 
 const stripePromise = loadStripe(String(process.env.NEXT_PUBLIC_STRIPE_PUBLIC))
 
-function PlaceOrder (cartProp) {
+function PlaceOrder () {
 
     const [clientSecret, setClientSecret] = React.useState(null)
-    const [cart, setCart] = React.useState(cartProp)
+    const [cart, setCart] = React.useState()
+    const [noitems, setNoitems] = React.useState(false)
 
     const [message, setMessage] = React.useState("")
     const [data, setData] = React.useState({address: "", city: "", state: ""})
@@ -19,7 +20,7 @@ function PlaceOrder (cartProp) {
     useEffect(() => {
         loadCart()
             .then((res) => {
-                setCart(res)
+                setCart(JSON.parse(res))
             })
             .catch(err => {
                 console.log(err)
@@ -27,11 +28,13 @@ function PlaceOrder (cartProp) {
     }, [])
     
     useEffect(() => {
-        console.log(String(process.env.NEXT_PUBLIC_STRIPE_PUBLIC))
         createPaymentIntent()
             .then(res => {
-                console.log(res.data.clientSecret)
-                setClientSecret(res.data.clientSecret)
+                if (res == null) {
+                    setNoitems(true)
+                } else {
+                    setClientSecret(res.data.clientSecret)
+                }
             })
             .catch(err => {
                 console.log(err)
@@ -59,7 +62,7 @@ function PlaceOrder (cartProp) {
                 return 
             }
 
-            axios.post(`${process.env.NEXT_PUBLIC_sAPI_URL}/api/orders`, 
+            axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, 
                 {
                     data : {
                         Address: data.address,
@@ -67,21 +70,23 @@ function PlaceOrder (cartProp) {
                         State: data.state,
                         Dishes: cart.items,
                         Amount: cart.total
-                }}
-                )
+                    }
+                })
     
             const { error } = stripe.confirmPayment({
                 elements,
                 confirmParams: {
-                    return_url: "http://localhost:3000/success"
+                    return_url: "http://0.0.0.0:3000/success"
                 }
             })
     
-            if (error.type === "card_error" || error.type === "validation_error") {
-                setMessage(error.message);
-            } else {
-                setMessage("An unexpected error occured.");
-            }
+            setTimeout(function () {
+                if (error.type === "card_error" || error.type === "validation_error") {
+                    setMessage(error.message);
+                } else {
+                    setMessage("An unexpected error occured.");
+                }
+            }, 2000)
         }  
 
         return (
@@ -92,6 +97,22 @@ function PlaceOrder (cartProp) {
             {message && <div>{message}</div>}
             </>
         )
+    }
+
+    function CheckItems () {
+        if (clientSecret === null) {
+            return (
+                <>
+                <div>No items in cart</div>
+                </>
+            )
+        } else {
+            return (
+                <>
+                <CircularProgress />
+                </>
+            )
+        }
     }
 
     return (
@@ -127,7 +148,7 @@ function PlaceOrder (cartProp) {
                 </FormGroup>
                 {clientSecret && stripePromise ? (<Elements stripe={stripePromise} options={options}>
                     <CheckoutForm />
-                </Elements>) : <CircularProgress />}
+                </Elements>) : <CheckItems />}
             </Card>
                 
 

@@ -1,8 +1,10 @@
 import { loadRedis } from "../../lib/cartFunctions"
 
 export default async function handler(req, res) {
+    console.log(req.body)
     var redis = await loadRedis()
-    redis.get('cart')
     redis.set('cart', JSON.stringify(req.body))
-    res.status(200)
+    var newCart = await redis.get('cart')
+    console.log(newCart)
+    res.send(newCart)
 }

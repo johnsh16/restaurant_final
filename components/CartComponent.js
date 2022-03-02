@@ -10,7 +10,7 @@ import { useRouter } from 'next/router'
 
 function CartComponent () {
 
-    const [cart, setCart] = React.useState()
+    const [cart, setCart] = React.useState([])
     const [total, setTotal] = React.useState(0)
     const [wholeCart, setWholeCart] = React.useState({})
     const [reload, setReload] = React.useState(false)
@@ -22,9 +22,10 @@ function CartComponent () {
             console.log("Trigger reload of CartComponent")
             loadCart()
                 .then((res) => {
+                    let parsed = JSON.parse(res)
                     console.log("Cart loaded: ", res)
-                    setTotal(res.total)
-                    setCart(parseCart(res.items))
+                    setTotal(parsed.total)
+                    setCart(parseCart(parsed.items))
                 })
                 .catch((err) => {
                     console.log(err)
@@ -36,9 +37,16 @@ function CartComponent () {
     useEffect(() => {
         loadCart()
             .then(res => {
-                setWholeCart(res.items)
-                setTotal(res.total)
-                setCart(parseCart(res.items))
+                if (res === "") {
+                    setWholeCart([])
+                    setTotal(0)
+                    setCart(parseCart([]))
+                } else {
+                    let parsed = JSON.parse(res)
+                    setWholeCart(parsed.items)
+                    setTotal(parsed.total)
+                    setCart(parseCart(parsed.items))
+                } 
             })
             .catch(err => {
                 console.log(err)
@@ -65,30 +73,58 @@ function CartComponent () {
         console.log(newArray)
         return newArray
     }
-    return (
-        <Card className={styles.order_summary}>
-            <CardHeader
-                title="Your Cart"
-                action={
-                    <Button onClick={() => setReload(!reload)}><RefreshIcon /></Button>
+    if (cart.length==0) {
+        return (
+            <Card className={styles.order_summary}>
+                <CardHeader
+                    title="Your Cart"
+                    action={
+                        <Button onClick={() => setReload(!reload)}><RefreshIcon /></Button>
+                    }
+                />
+                <CardContent>
+                {cart !== undefined 
+                ? <>{
+                    cart.map((item, i) => (
+                        <ItemComponent item={item} key={i} completeCart={wholeCart}/>
+                    ))
+                }</> : <CircularProgress />
                 }
-            />
-            <CardContent>
-            {cart !== undefined 
-            ? <>{
-                cart.map((item, i) => (
-                    <ItemComponent item={item} key={i} completeCart={wholeCart}/>
-                ))
-            }</> : <CircularProgress />
-            }
-            <Box sx={{bgcolor:'lightgray', width:"50%", margin: "auto"}}>
-                <Typography>
-                    Total: ${total.toFixed(2)}
-                </Typography>
-            </Box>
-            </CardContent>
-        </Card>
-    )
+                <Box sx={{bgcolor:'lightgray', width:"50%", margin: "auto"}}>
+                    <Typography>
+                        Cart Is Empty
+                    </Typography>
+                </Box>
+                </CardContent>
+            </Card>
+        )
+    } else {
+        return (
+            <Card className={styles.order_summary}>
+                <CardHeader
+                    title="Your Cart"
+                    action={
+                        <Button onClick={() => setReload(!reload)}><RefreshIcon /></Button>
+                    }
+                />
+                <CardContent>
+                {cart !== undefined 
+                ? <>{
+                    cart.map((item, i) => (
+                        <ItemComponent item={item} key={i} completeCart={wholeCart}/>
+                    ))
+                }</> : <CircularProgress />
+                }
+                <Box sx={{bgcolor:'lightgray', width:"50%", margin: "auto"}}>
+                    <Typography>
+                        {total!==undefined ? <>Total: ${total.toFixed(2)}</> : null}
+                    </Typography>
+                </Box>
+                </CardContent>
+            </Card>
+        )
+    }
+        
 }
 
 export default CartComponent
@@ -121,9 +157,12 @@ function ItemComponent (item) {
         }
         console.log(newTotal)
         console.log('test increment', itemsArray, newTotal)
-        saveCart({items: itemsArray, total: newTotal})
-        const addToCart = new Event ('addToCart')
-        window.dispatchEvent(addToCart)
+        saveCart({"items": itemsArray, "total": newTotal})
+            .then((res) => {
+                console.log('returned from increment', res)
+                const addToCart = new Event ('addToCart')
+                window.dispatchEvent(addToCart)
+            })
     }
 
     function decrementDish () {
@@ -144,9 +183,12 @@ function ItemComponent (item) {
             newTotal += newCart[i].item.cost
         }
         console.log(newCart, newTotal)
-        saveCart({items: newCart, total: newTotal})
-        const addToCart = new Event ('addToCart')
-        window.dispatchEvent(addToCart)
+        saveCart({"items": newCart, "total": newTotal})
+            .then((res) => {
+                console.log('returned from decrement', res)
+                const addToCart = new Event ('addToCart')
+                window.dispatchEvent(addToCart)
+            })
     }
 
     if (!displayInfo) {

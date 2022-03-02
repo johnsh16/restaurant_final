@@ -278,14 +278,19 @@ function DishCard (props) {
         console.log('cart at submit', cart)
         loadCart()
             .then((res) => {
+                let parsed = JSON.parse(res)
                 console.log('recieved at the Dish level', res)
-                saveCart({items: [...res.items, itemObj], total: res.total + cost})
+                saveCart({"items": [...parsed.items, itemObj], "total": parsed.total + cost})
+                    .then((res) => {
+                        console.log('Cart saved as', res)
+                        const addToCart = new Event('addToCart')
+                        window.dispatchEvent(addToCart)
+                    })
             })
             .catch((err) => {
                 console.log(err)
             })
-        const addToCart = new Event('addToCart')
-        window.dispatchEvent(addToCart)
+        
     }
     
 

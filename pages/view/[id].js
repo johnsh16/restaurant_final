@@ -34,7 +34,7 @@ function View () {
         loadCart()
             .then((res) => {
                 console.log("Cart loaded: ", res)
-                setCart(res)
+                setCart(JSON.parse(res))
             })
             .catch((err) => {
                 console.log(err)

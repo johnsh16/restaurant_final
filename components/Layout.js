@@ -25,10 +25,17 @@ function Layout ({children}) {
     useEffect(() => {
         loadCart()
             .then(res => {
+                if (res == null) {
+                    return
+                }
                 console.log(res)
                 setCartState(res)})
             .catch(err => console.log(err)) 
     }, [])
+
+    useEffect(() => {
+        console.log(cartState)
+    }, [cartState])
 
 
     useEffect(() => {
@@ -121,7 +128,7 @@ function Layout ({children}) {
         <AppBar position="static" sx={{marginBottom: "10px"}}>
             <Toolbar>
                 <Typography component="div" sx={{ flexGrow: 1}}><Link href="/">Restaurant App</Link></Typography>
-                <Badge badgeContent={cartState.items.length} color="secondary" update={updater}><ShoppingBagIcon onClick={() => router.push('/checkout')} /></Badge>
+                <Badge badgeContent={0} color="secondary" update={updater}><ShoppingBagIcon onClick={() => router.push('/checkout')} /></Badge>
                 <AccountCircleIcon sx={{padding: "1%"}} onClick={openAccount} />
                 <AccountDialog />
             </Toolbar>

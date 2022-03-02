@@ -41,12 +41,12 @@ function RestaurantsHome () {
                 </Card>
                 </>
             )
-        } else {
+        } else  {
             const fiveRestaurants = restaurants.slice(start, stop)
             if (start===0) {
                 return (
                     <>
-                    <Card id={styles.restaurantsHome} sx={{padding: "0.5%", height: "60vh"}}>
+                    <Card id={styles.restaurantsHome} sx={{padding: "0.5%", height: "57vh"}}>
                     <CardHeader
                         title="Featured Restaurants"
                     />
@@ -62,7 +62,7 @@ function RestaurantsHome () {
             } else if (restaurants.length>stop) {
                 return (
                     <>
-                    <Card id={styles.restaurantsHome} sx={{padding: "0.5%", height: "60vh"}}>
+                    <Card id={styles.restaurantsHome} sx={{padding: "0.5%", height: "57vh"}}>
                     <CardHeader
                         title="Featured Restaurants"
                     />
@@ -79,7 +79,7 @@ function RestaurantsHome () {
             } else {
                 return (
                     <>
-                    <Card id={styles.restaurantsHome} sx={{padding: "0.5%", height: "60vh"}}>
+                    <Card id={styles.restaurantsHome} sx={{padding: "0.5%", height: "57vh"}}>
                     <CardHeader
                         title="Featured Restaurants"
                     />
@@ -93,7 +93,7 @@ function RestaurantsHome () {
                     </>
                 )
             }
-        }
+        } 
     } else {
         return (
             <>

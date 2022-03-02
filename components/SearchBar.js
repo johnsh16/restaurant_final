@@ -85,7 +85,7 @@ function SearchBar () {
                     {returnArray.map((item, i) => (
                         <Grid item key={i}>
                             <Box sx={{border: "1px solid black", padding:"3%", margin:"auto" }}>
-                                <Typography color="whitesmoke">{item.attributes.name}</Typography>
+                                <Typography>{item.attributes.name}</Typography>
                                 <Button onClick={() => router.push(`/view/${item.id}`)}>Go</Button>
                             </Box>
                         </Grid>
