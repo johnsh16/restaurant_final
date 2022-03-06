@@ -76,7 +76,7 @@ function PlaceOrder () {
             const { error } = stripe.confirmPayment({
                 elements,
                 confirmParams: {
-                    return_url: "http://0.0.0.0:3000/success"
+                    return_url: "http://147.182.163.162:3000/success"
                 }
             })
     
