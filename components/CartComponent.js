@@ -7,6 +7,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { loadCart, saveCart } from '../lib/cartFunctions';
 import { useRouter } from 'next/router'
+import { isMobile } from 'react-device-detect'
 
 function CartComponent () {
 
@@ -99,30 +100,72 @@ function CartComponent () {
             </Card>
         )
     } else {
-        return (
-            <Card className={styles.order_summary}>
-                <CardHeader
-                    title="Your Cart"
-                    action={
-                        <Button onClick={() => setReload(!reload)}><RefreshIcon /></Button>
+        if (!isMobile) {
+            return (
+                <Card className={styles.order_summary}>
+                    <CardHeader
+                        title="Your Cart"
+                        action={
+                            <Button onClick={() => setReload(!reload)}><RefreshIcon /></Button>
+                        }
+                    />
+                    <CardContent>
+                    {cart !== undefined 
+                    ? <>{
+                        cart.map((item, i) => (
+                            <ItemComponent item={item} key={i} completeCart={wholeCart}/>
+                        ))
+                    }</> : <CircularProgress />
                     }
-                />
-                <CardContent>
-                {cart !== undefined 
-                ? <>{
-                    cart.map((item, i) => (
-                        <ItemComponent item={item} key={i} completeCart={wholeCart}/>
-                    ))
-                }</> : <CircularProgress />
-                }
-                <Box sx={{bgcolor:'lightgray', width:"50%", margin: "auto"}}>
-                    <Typography>
-                        {total!==undefined ? <>Total: ${total.toFixed(2)}</> : null}
-                    </Typography>
-                </Box>
-                </CardContent>
-            </Card>
-        )
+                    <Box sx={{bgcolor:'lightgray', width:"50%", margin: "auto"}}>
+                        <Typography>
+                            {total!==undefined ? <>Total: ${total.toFixed(2)}</> : null}
+                        </Typography>
+                    </Box>
+                    </CardContent>
+                </Card>
+            )
+        } else {
+            return (
+                <Card 
+                    sx={{
+                        width: "35vw",
+                        maxHeight: "89vh",
+                        overflowY: "scroll"
+                    }}
+                >
+                    <CardHeader
+                        title="Your Cart"
+                        sx={{
+                            zIndex: "1",
+                            bgcolor: "white",
+                            position: "absolute",
+                            marginBottom: "5px",
+                            maxWidth: "100%"
+                        }}
+                    />
+                    <CardContent
+                        sx={{
+                            marginTop: "35px"
+                        }}
+                    >
+                    {cart !== undefined 
+                    ? <>{
+                        cart.map((item, i) => (
+                            <ItemComponent item={item} key={i} completeCart={wholeCart}/>
+                        ))
+                    }</> : <CircularProgress />
+                    }
+                    <Box sx={{bgcolor:'lightgray', width:"50%", margin: "auto"}}>
+                        <Typography>
+                            {total!==undefined ? <>Total: ${total.toFixed(2)}</> : null}
+                        </Typography>
+                    </Box>
+                    </CardContent>
+                </Card>
+            )
+        }
+        
     }
         
 }
@@ -160,7 +203,7 @@ function ItemComponent (item) {
         saveCart({"items": itemsArray, "total": newTotal})
             .then((res) => {
                 console.log('returned from increment', res)
-                const addToCart = new Event ('addToCart')
+                const addToCart = new CustomEvent ('addToCart', {detail: item.name})
                 window.dispatchEvent(addToCart)
             })
     }
@@ -186,12 +229,12 @@ function ItemComponent (item) {
         saveCart({"items": newCart, "total": newTotal})
             .then((res) => {
                 console.log('returned from decrement', res)
-                const addToCart = new Event ('addToCart')
+                const addToCart = new CustomEvent ('addToCart', {detail: item.attributes.name})
                 window.dispatchEvent(addToCart)
             })
     }
 
-    if (!displayInfo) {
+    if (!displayInfo && !isMobile) {
         return (
             <>
             <Card className={styles.itemComponent}>
@@ -215,26 +258,86 @@ function ItemComponent (item) {
             </Card>
             </>
         )
+    } else if (displayInfo && !isMobile) {
+            return (
+                <>
+                <Card className={styles.itemComponent}>
+                    <CardContent>
+                        <Typography variant="h6">
+                            {item.item.itemObj.item.name} x{item.item.count}
+                        </Typography>
+                        <Typography variant="body2">
+                            From: {item.item.itemObj.item.restaurant.data.attributes.name}
+                        </Typography>
+                    </CardContent>
+                    <CardActions>
+                        <Button><AddIcon /></Button>
+                        <Button><RemoveIcon /></Button>
+                        <Button onClick={() => setDisplayInfo(!displayInfo)}><InfoIcon /></Button>
+                    </CardActions>
+                </Card>
+                </>
+            )
     } else {
         return (
             <>
-            <Card className={styles.itemComponent}>
+            <Card 
+                sx={{
+                    width: '90%',
+                    maxHeight: "60vh",
+                    overflowY: "scroll"
+                }}
+            >
                 <CardContent>
-                    <Typography variant="h6">
+                    <Typography 
+                        sx={{
+                            fontSize: 9
+                        }}
+                    >
                         {item.item.itemObj.item.name} x{item.item.count}
                     </Typography>
-                    <Typography variant="body2">
+                    <Typography 
+                        sx={{
+                            fontSize: 11
+                        }}
+                    >
                         From: {item.item.itemObj.item.restaurant.data.attributes.name}
                     </Typography>
                 </CardContent>
-                <CardActions>
-                    <Button><AddIcon /></Button>
-                    <Button><RemoveIcon /></Button>
-                    <Button onClick={() => setDisplayInfo(!displayInfo)}><InfoIcon /></Button>
+                <CardActions
+                    sx={{
+                        width: "100%"
+                    }}
+                >
+                    <Button 
+                        sx={{
+                            minWidth: "20px",
+                        }}
+                        onClick={incrementDish}
+                    >
+                        <AddIcon
+                            sx={{
+                                width: "15px"
+                            }}
+                        />
+                    </Button>
+                    <Button
+                        sx={{
+                            minWidth: "20px"
+                        }}
+                        onClick={decrementDish}
+                    >
+                        <RemoveIcon
+                            sx={{
+                                width: "15px"
+                            }}
+                        />
+                    </Button>
                 </CardActions>
             </Card>
             </>
         )
-    }
-    
+    } 
 }
+
+

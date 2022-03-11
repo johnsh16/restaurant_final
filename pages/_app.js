@@ -5,6 +5,7 @@ import {Button, Snackbar} from "@mui/material"
 import {ApolloProvider,ApolloClient,HttpLink, InMemoryCache} from '@apollo/client';
 import "regenerator-runtime/runtime.js"
 import { UserProvider } from '@auth0/nextjs-auth0'
+import { useRouter } from 'next/router'
 
 
 
@@ -13,23 +14,6 @@ function MyApp({ Component, pageProps }) {
   const link = new HttpLink({uri : `${process.env.NEXT_PUBLIC_API_URL}/graphql`})
   const cache = new InMemoryCache()
   const client = new ApolloClient({link, cache})
-
-  const [itemsAdded, setItemsAdded] = React.useState("")
-
-  useEffect(() => {
-    window.addEventListener('addToCart', function (e) {
-        setItemsAdded(e.detail)
-    })
-  }, [])
-
-  const SnackContainer = () => {
-      return (
-          <>
-          <CartSnack props={itemsAdded[0]} />
-          </>
-      )
-  }
-
 
   return (
     <>
@@ -40,18 +24,27 @@ function MyApp({ Component, pageProps }) {
       </Layout>
     </ApolloProvider>
     </UserProvider>
-    {itemsAdded !== "" ? <SnackContainer /> : null}
+    <CartSnack />
     </>
   )
 }
 
 export default MyApp
 
-function CartSnack (props) {
+function CartSnack () {
 
-  console.log(props)
+  const router = useRouter()
+  const [itemAdded, setItemAdded] = React.useState(null)
 
-  const [open, setOpen] = React.useState(true)
+  useEffect(() => {
+    window.addEventListener('addToCart', function (e) {
+        console.log("heard addCart from CartSnack", e.detail)
+        setItemAdded(e.detail)
+        setTimeout(function () {
+          setItemAdded(null)
+        }, 6050)
+    })
+  }, [])
 
   const action = (
       <>
@@ -61,12 +54,18 @@ function CartSnack (props) {
       </>
   )
 
-  function handleClose () {
-      setOpen(false)
-  }
+  
 
-  return (
-      <Snackbar   
+  const Snackie = (props) => {
+
+      const [open, setOpen] = React.useState(true)
+
+      function handleClose () {
+        setOpen(false)
+      }
+
+      return (
+        <Snackbar   
           open={open}
           autoHideDuration={6000}
           onClose={handleClose}
@@ -77,5 +76,16 @@ function CartSnack (props) {
               zIndex: "100"
           }}
       />
+      )
+  }
+      
+   
+
+  return (
+    <>
+    {itemAdded !== null ? 
+      <Snackie props={itemAdded} /> : null  
+    }
+    </>
   )
 }

@@ -59,7 +59,7 @@ function RestaurantCard (props) {
             setMinwidth("10vw")
             setMaxwidth("20vw")
             setHeaderheight("8vh")
-            setImageheight("100px")
+            setImageheight("120px")
             setImageWidth("100px")
             setContentheight("10%")
             setChildren(1)

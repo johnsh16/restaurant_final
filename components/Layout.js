@@ -18,7 +18,7 @@ function Layout ({children}) {
         setDisplayAccount(true)
     }
     const { user, isLoading } = useUser()
-    const [itemsAdded, setItemsAdded] = React.useState([])
+    
  
     useEffect(() => {
         loadCart()
@@ -32,14 +32,8 @@ function Layout ({children}) {
     useEffect(() => {
         window.addEventListener('addToCart', function (e) {
             loadCart()
-            .then(res => setCartState(res))
+            .then(res => setCartState(JSON.parse(res)))
             .catch(err => console.log(err)) 
-        })
-    }, [])
-
-    useEffect(() => {
-        window.addEventListener('addToCart', function (e) {
-            setItemsAdded([e.detail])
         })
     }, [])
 
@@ -90,15 +84,6 @@ function Layout ({children}) {
     }
 
 
-    const SnackContainer = React.memo(() => {
-        return (
-            <>
-            <CartSnack props={itemsAdded[0]} />
-            </>
-        )
-    })
-
-
     
     return (
         <>
@@ -111,7 +96,6 @@ function Layout ({children}) {
             </Toolbar>
         </AppBar>
         {children}
-        <SnackContainer props={itemsAdded} />
         </>
     )
     
@@ -120,36 +104,5 @@ function Layout ({children}) {
 
 export default Layout
 
-function CartSnack (props) {
 
-    console.log(props)
-
-    const [open, setOpen] = React.useState(true)
-
-    const action = (
-        <>
-        <Button color="secondary" size="small" onClick={()=> {router.push('/checkout')}}>
-            View
-        </Button>
-        </>
-    )
-
-    function handleClose () {
-        setOpen(false)
-    }
-
-    return (
-        <Snackbar   
-            open={open}
-            autoHideDuration={6000}
-            onClose={handleClose}
-            message={`${props.props} added to cart.`}
-            action={action}
-            sx={{
-                position: "fixed",
-                zIndex: "100"
-            }}
-        />
-    )
-}
 
