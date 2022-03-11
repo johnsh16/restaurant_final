@@ -1,34 +1,11 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Displays an array of restaurants, allows you to add dishes to your cart, and check out using a live Stripe integration. A user may log in with a username and password or their Google login information. 
 
-## Getting Started
+This project is uses Next.js, an SQLite database, Redis, GraphQL, Stripe, and Auth0. 
 
-First, run the development server:
+The project is deployed using Docker and is hosted here: yons.io:3000. If the site is not available, I have taken it down because I am not made of money. 
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+![Screen Shot 2022-03-11 at 3 09 07 PM](https://user-images.githubusercontent.com/84100060/157953858-cadffacb-673c-47c7-a7d1-d1f2429a5ae2.png)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+![Screen Shot 2022-03-11 at 3 09 23 PM](https://user-images.githubusercontent.com/84100060/157953905-a5a69e02-2fbb-4738-b7d8-567ef8597f07.png)
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+![Screen Shot 2022-03-11 at 3 14 27 PM](https://user-images.githubusercontent.com/84100060/157953941-460100cb-d8ac-4e44-b9d7-e4a8f794335b.png)
