@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react'
 import { useRouter } from 'next/router'
-import {AppBar, Toolbar, Button, Typography, Badge, Dialog, CircularProgress, } from "@mui/material"
+import {AppBar, Toolbar, Button, Typography, Badge, Dialog, CircularProgress, Snackbar, styles} from "@mui/material"
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import { loadCart } from "../lib/cartFunctions"
@@ -11,31 +11,22 @@ import Link from 'next/link'
 function Layout ({children}) {
 
     const router = useRouter()
-    const [updater, setUpdater] = React.useState(false)
     const [cartState, setCartState] = React.useState({items: [], total: 0})
     const [userObj, setUserObj] = React.useState()
     const [displayAccount, setDisplayAccount] = React.useState(false)
-        var openAccount = () => {
-            setDisplayAccount(true)
-        }
-
+    var openAccount = () => {
+        setDisplayAccount(true)
+    }
     const { user, isLoading } = useUser()
-
-
+    const [itemsAdded, setItemsAdded] = React.useState([])
+ 
     useEffect(() => {
         loadCart()
             .then(res => {
-                if (res == null) {
-                    return
-                }
-                console.log(res)
-                setCartState(res)})
+                setCartState(JSON.parse(res))
+            })
             .catch(err => console.log(err)) 
     }, [])
-
-    useEffect(() => {
-        console.log(cartState)
-    }, [cartState])
 
 
     useEffect(() => {
@@ -44,32 +35,11 @@ function Layout ({children}) {
             .then(res => setCartState(res))
             .catch(err => console.log(err)) 
         })
-    }, [cartState])
-
-    useEffect(() => {
-        getRedisAuth()
-            .then((res) => {
-                console.log(res)
-                if (typeof res.data === 'object') {
-                    setUserObj(res.data.user)
-                } else {
-                    console.log(typeof res.data)
-                }
-            })
-            .catch((err) => {
-                console.log(err)
-            })
     }, [])
 
     useEffect(() => {
-        window.addEventListener('loggedIn', function () {
-            getRedisAuth()
-                .then(res => {
-                    setUserObj(res.data.user)
-                })
-                .catch(err => {
-                    console.log(err)
-                })
+        window.addEventListener('addToCart', function (e) {
+            setItemsAdded([e.detail])
         })
     }, [])
 
@@ -119,7 +89,14 @@ function Layout ({children}) {
             
     }
 
-    
+
+    const SnackContainer = React.memo(() => {
+        return (
+            <>
+            <CartSnack props={itemsAdded[0]} />
+            </>
+        )
+    })
 
 
     
@@ -128,12 +105,13 @@ function Layout ({children}) {
         <AppBar position="static" sx={{marginBottom: "10px"}}>
             <Toolbar>
                 <Typography component="div" sx={{ flexGrow: 1}}><Link href="/">Restaurant App</Link></Typography>
-                <Badge badgeContent={0} color="secondary" update={updater}><ShoppingBagIcon onClick={() => router.push('/checkout')} /></Badge>
+                {cartState.items !== undefined ? <Badge badgeContent={cartState.items.length} color="secondary"><ShoppingBagIcon onClick={() => router.push('/checkout')} /></Badge> : null}
                 <AccountCircleIcon sx={{padding: "1%"}} onClick={openAccount} />
                 <AccountDialog />
             </Toolbar>
         </AppBar>
         {children}
+        <SnackContainer props={itemsAdded} />
         </>
     )
     
@@ -141,3 +119,37 @@ function Layout ({children}) {
 }
 
 export default Layout
+
+function CartSnack (props) {
+
+    console.log(props)
+
+    const [open, setOpen] = React.useState(true)
+
+    const action = (
+        <>
+        <Button color="secondary" size="small" onClick={()=> {router.push('/checkout')}}>
+            View
+        </Button>
+        </>
+    )
+
+    function handleClose () {
+        setOpen(false)
+    }
+
+    return (
+        <Snackbar   
+            open={open}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            message={`${props.props} added to cart.`}
+            action={action}
+            sx={{
+                position: "fixed",
+                zIndex: "100"
+            }}
+        />
+    )
+}
+

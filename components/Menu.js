@@ -4,6 +4,7 @@ import { gql, useQuery } from '@apollo/client';
 import { useEffect } from 'react';
 import styles from '../styles/Menu.module.css'
 import {saveCart, loadCart} from '../lib/cartFunctions'
+import { cp } from 'fs';
 
 
 
@@ -283,7 +284,8 @@ function DishCard (props) {
                 saveCart({"items": [...parsed.items, itemObj], "total": parsed.total + cost})
                     .then((res) => {
                         console.log('Cart saved as', res)
-                        const addToCart = new Event('addToCart')
+                        console.log(itemObj)
+                        const addToCart = new CustomEvent('addToCart', {detail: itemObj.item.name})
                         window.dispatchEvent(addToCart)
                     })
             })

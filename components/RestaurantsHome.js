@@ -5,15 +5,23 @@ import RestaurantCard from './smaller_components/RestaurantCard'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import axios from 'axios'
+import {isMobile} from 'react-device-detect'
 
 function RestaurantsHome () {
 
     const [restaurants, setRestaurants] = React.useState([])
+    const [increment, setIncrement] = React.useState(5)
     const [start, setStart] = React.useState(0)
-    const [stop, setStop] = React.useState(5)
+    const [stop, setStop] = React.useState(start+increment)
+    const [sliced, setSliced] = React.useState(restaurants.slice(start, stop))
     const bp1 = useMediaQuery('(min-width:1150px')
+    const mobile1 = useMediaQuery('(min-width:600px)')
 
     useEffect(() => {
+        if (isMobile) {
+            console.log(isMobile)
+            setIncrement(3)
+        } 
         axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/restaurants?populate=*`)
             .then(res => {
                 console.log(res.data)
@@ -22,14 +30,76 @@ function RestaurantsHome () {
                     restaurantArray.push(res.data.data[i])
                 }
                 setRestaurants(restaurantArray)
+                if (isMobile) {
+                    setSliced(restaurantArray.slice(start, start+3))
+                    setStop(start+3)
+                } else {
+                    setSliced(restaurantArray.slice(start, start+5))
+                    setStop(start+5)
+                }
             })
     }, [])
+
+    useEffect(() => {
+        setSliced(restaurants.slice(start, stop))
+    }, [start, stop])
+
+    useEffect(() => {
+        if (!mobile1 || isMobile) {
+            setIncrement(3)
+            setSliced(restaurants.slice(start, 3))
+        } else {
+            setIncrement(5)
+            setSliced(restaurants.slice(start, 5))
+        }
+    }, [mobile1])
+
+    useEffect(() => {
+        console.log(sliced)
+    }, [sliced])
+
+    const ForwardArrow = () => (
+        <>
+        <Button
+         sx={{
+             padding: "0%",
+             width: "8%",
+             minWidth: "2%"
+         }}
+         onClick={() => {setStart(start+increment); setStop(stop+increment)}}>
+             <ArrowForwardIosIcon
+                sx={{
+                    width: "4vw"
+                }}
+             />
+        </Button>
+        </>
+    )
+
+    const BackwardArrow = () => (
+        <>
+        <Button
+            onClick={() => {setStart(start-increment); setStop(stop-increment)}}
+            sx={{
+                padding: "0%",
+                width: "8%",
+                minWidth: "2%"
+            }}
+        >
+                <ArrowBackIosNewIcon
+                    sx={{
+                        width: "4vw"
+                    }}
+                />
+        </Button>
+        </>
+    )
 
     if (restaurants) {
         if (bp1) {
             return (
                 <>
-                <Card id={styles.restaurantsHome} sx={{padding: "0.5%", height: "65vh"}}>
+                <Card id={styles.restaurantsHome} sx={{padding: "0.5%", height: "40vh"}}>
                 <CardHeader
                     title="Featured Restaurants"
                 />
@@ -46,15 +116,15 @@ function RestaurantsHome () {
             if (start===0) {
                 return (
                     <>
-                    <Card id={styles.restaurantsHome} sx={{padding: "0.5%", height: "57vh"}}>
+                    <Card id={styles.restaurantsHome} sx={{paddingLeft: "1%", height: "40vh"}}>
                     <CardHeader
                         title="Featured Restaurants"
                     />
                         <Stack direction="row" spacing={1}>
-                        {fiveRestaurants.map((item, i) => (
+                        {sliced.map((item, i) => (
                             <RestaurantCard key={i} data={item.attributes} id={item.id}/>
                         ))}
-                        <Button onClick={() => {setStart(5); setStop(10)}}><ArrowForwardIosIcon /></Button>
+                        <ForwardArrow />
                         </Stack>
                     </Card>
                     </>
@@ -62,16 +132,16 @@ function RestaurantsHome () {
             } else if (restaurants.length>stop) {
                 return (
                     <>
-                    <Card id={styles.restaurantsHome} sx={{padding: "0.5%", height: "57vh"}}>
+                    <Card id={styles.restaurantsHome} sx={{padding: "0.5%", height: "40vh"}}>
                     <CardHeader
                         title="Featured Restaurants"
                     />
                         <Stack direction="row" spacing={1}>
-                        <Button onClick={() => {setStart(start-5); setStop(stop-5)}}><ArrowBackIosNewIcon /></Button>
-                        {fiveRestaurants.map((item, i) => (
+                        <BackwardArrow />
+                        {sliced.map((item, i) => (
                             <RestaurantCard key={i} data={item.attributes} id={item.id}/>
                         ))}
-                        <Button onClick={() => {setStart(5); setStop(10)}}><ArrowForwardIosIcon /></Button>
+                        <ForwardArrow />
                         </Stack>
                     </Card>
                     </>
@@ -79,13 +149,13 @@ function RestaurantsHome () {
             } else {
                 return (
                     <>
-                    <Card id={styles.restaurantsHome} sx={{padding: "0.5%", height: "57vh"}}>
+                    <Card id={styles.restaurantsHome} sx={{padding: "0.5%", height: "40vh"}}>
                     <CardHeader
                         title="Featured Restaurants"
                     />
                         <Stack direction="row" spacing={1}>
-                        <Button onClick={() => {setStart(start-5); setStop(stop-5)}}><ArrowBackIosNewIcon /></Button>
-                        {fiveRestaurants.map((item, i) => (
+                        <BackwardArrow />
+                        {sliced.map((item, i) => (
                             <RestaurantCard key={i} data={item.attributes} id={item.id}/>
                         ))}
                         </Stack>

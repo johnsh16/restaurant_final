@@ -175,7 +175,7 @@ function SearchBar () {
     if (!openSearch) {
         return (
             <>
-            <Box id={styles.searchBar} sx={{bgcolor:"lightblue"}}>
+            <Box id={styles.searchBar} sx={{bgcolor:"aliceblue"}}>
                 <TextField
                 sx={{width:'100%'}}
                 defaultValue={queryText}
@@ -204,7 +204,7 @@ function SearchBar () {
                     maxWidth={"lg"}
 
                 >
-                <Box id={styles.searchBar} sx={{bgcolor:"lightblue"}}>
+                <Box id={styles.searchBar} sx={{bgcolor:"aliceblue"}}>
                         <TextField
                         sx={{width:'100%'}}
                         onChange={(e) => {setQueryText(e.target.value)}}
