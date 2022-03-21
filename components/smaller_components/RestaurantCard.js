@@ -58,7 +58,7 @@ function RestaurantCard (props) {
             setTotalwidth("20vw")
             setMinwidth("10vw")
             setMaxwidth("20vw")
-            setHeaderheight("8vh")
+            setHeaderheight("14vh")
             setImageheight("120px")
             setImageWidth("100px")
             setContentheight("10%")
@@ -69,7 +69,7 @@ function RestaurantCard (props) {
             setTotalwidth("20vw")
             setMinwidth("10vw")
             setMaxwidth("20vw")
-            setHeaderheight("6vh")
+            setHeaderheight("8vh")
             setImageheight("100px")
             setImageWidth("100px")
             setContentheight("10%")
@@ -91,7 +91,7 @@ function RestaurantCard (props) {
             setTotalwidth("20vw")
             setMinwidth("10vw")
             setMaxwidth("20vw")
-            setHeaderheight("8vh")
+            setHeaderheight("14vh")
             setImageheight("100px")
             setImageWidth("100px")
             setContentheight("10%")
@@ -102,7 +102,7 @@ function RestaurantCard (props) {
             setTotalwidth("20vw")
             setMinwidth("10vw")
             setMaxwidth("20vw")
-            setHeaderheight("8vh")
+            setHeaderheight("14vh")
             setImageheight("100px")
             setImageWidth("100px")
             setContentheight("10%")
@@ -113,7 +113,7 @@ function RestaurantCard (props) {
             setTotalwidth("20vw")
             setMinwidth("10vw")
             setMaxwidth("20vw")
-            setHeaderheight("8vh")
+            setHeaderheight("12vh")
             setImageheight("100px")
             setImageWidth("100px")
             setContentheight("10%")
@@ -174,7 +174,8 @@ function RestaurantCard (props) {
                     height: total_height,
                     weight: total_width,
                     minWidth: total_minWidth,
-                    maxWidth: total_maxWidth
+                    maxWidth: total_maxWidth,
+                    fontFamily: 'Karla'
                 }}
             >
                 <CardActionArea
@@ -186,7 +187,8 @@ function RestaurantCard (props) {
                             minHeight: header_height
                         }}
                         titleTypographyProps={{
-                            fontSize: Number(header_fontSize)
+                            fontSize: Number(header_fontSize),
+                            fontFamily: "Karla"
                         }}
                     />
                     <CardMedia

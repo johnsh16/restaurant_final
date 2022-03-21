@@ -4,7 +4,6 @@ import { gql, useQuery } from '@apollo/client';
 import { useEffect } from 'react';
 import styles from '../styles/Menu.module.css'
 import {saveCart, loadCart} from '../lib/cartFunctions'
-import { cp } from 'fs';
 
 
 

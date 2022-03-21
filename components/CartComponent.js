@@ -78,12 +78,20 @@ function CartComponent () {
         return (
             <Card className={styles.order_summary}>
                 <CardHeader
-                    title="Your Cart"
-                    action={
-                        <Button onClick={() => setReload(!reload)}><RefreshIcon /></Button>
-                    }
-                />
-                <CardContent>
+                        title="Your Cart"
+                        sx={{
+                            zIndex: "1",
+                            bgcolor: "white",
+                            position: "absolute",
+                            marginBottom: "5px",
+                            maxWidth: "100%"
+                        }}
+                    />
+                <CardContent
+                    sx={{
+                        marginTop: "35px"
+                    }}
+                >
                 {cart !== undefined 
                 ? <>{
                     cart.map((item, i) => (
@@ -105,11 +113,22 @@ function CartComponent () {
                 <Card className={styles.order_summary}>
                     <CardHeader
                         title="Your Cart"
-                        action={
-                            <Button onClick={() => setReload(!reload)}><RefreshIcon /></Button>
-                        }
+                        sx={{
+                            zIndex: "1",
+                            bgcolor: "white",
+                            position: "absolute",
+                            marginBottom: "5px",
+                            maxWidth: "100%",
+                            bgcolor: "aliceblue",
+                            border: "1px solid black",
+                        opacity: "75%"
+                        }}
                     />
-                    <CardContent>
+                    <CardContent
+                        sx={{
+                            marginTop: "35px",
+                        }}
+                    >
                     {cart !== undefined 
                     ? <>{
                         cart.map((item, i) => (

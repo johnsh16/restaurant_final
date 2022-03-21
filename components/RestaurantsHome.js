@@ -99,7 +99,7 @@ function RestaurantsHome () {
         if (bp1) {
             return (
                 <>
-                <Card id={styles.restaurantsHome} sx={{padding: "0.5%", height: "40vh"}}>
+                <Card id={styles.restaurantsHome} sx={{padding: "0.5%", height: "40vh", bgcolor:"white"}}>
                 <CardHeader
                     title="Featured Restaurants"
                 />
