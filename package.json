@@ -41,7 +41,7 @@
     "react-error-boundary": "^3.1.4",
     "react-test-renderer": "^17.0.2",
     "redis": "^4.0.3",
-    "strapi": "^3.6.8",
+    "strapi": "^3.6.10",
     "stripe": "^8.203.0",
     "terser-webpack-plugin": "^5.3.1",
     "tls": "^0.0.1",
