@@ -1,8 +1,10 @@
 Displays an array of restaurants, allows you to add dishes to your cart, and check out using a live Stripe integration. A user may log in with a username and password or their Google login information. 
 
-This project is uses Next.js, an SQLite database, Redis, GraphQL, Stripe, and Auth0. 
+Users can search by term for dishes and restaurants. 
 
-The project is deployed using Docker and is hosted here: yons.io:3000. If the site is not available, I have taken it down because I am not made of money. 
+Components adapt to screen size and may expand or contract visible options as screen size grows or shrinks. 
+
+This project is uses Next.js, an SQLite database, Redis, GraphQL, Stripe, and Auth0. 
 
 ![Screen Shot 2022-03-11 at 3 09 07 PM](https://user-images.githubusercontent.com/84100060/157953858-cadffacb-673c-47c7-a7d1-d1f2429a5ae2.png)
 
